@@ -24,7 +24,7 @@ namespace schoolmanagement.Models
         [Phone]
         public required string PhoneNumber { get; set; }
 
-        // --- CHANGE THIS LINE: Make TeacherId nullable by adding '?' ---
+
         [Display(Name = "Homeroom Teacher")]
         public int? TeacherId { get; set; } // Changed from 'int' to 'int?'
 
