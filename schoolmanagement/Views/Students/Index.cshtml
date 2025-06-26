@@ -24,6 +24,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teacher) @* ADDED/CORRECTED TEACHER HEADER *@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Class) @* CORRECTED CLASS HEADER *@
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -41,6 +47,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.Name) @* ADDED/CORRECTED TEACHER NAME CELL *@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Class.Name) @* CORRECTED CLASS NAME CELL *@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

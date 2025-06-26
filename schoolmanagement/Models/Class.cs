@@ -12,9 +12,9 @@ namespace schoolmanagement.Models
         public string Name { get; set; }
 
         [StringLength(200, ErrorMessage = "Description cannot exceed 200 characters.")]
-        public string Description { get; set; }
+        public string? Description { get; set; } // <<-- CHANGED: Made nullable with '?'
 
         // Navigation property for students in this class
-        public ICollection<Student> Students { get; set; }
+        public ICollection<Student>? Students { get; set; } = new List<Student>(); // <<-- CHANGED: Made nullable with '?' AND initialized
     }
 }

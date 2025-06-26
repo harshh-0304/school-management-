@@ -23,8 +23,10 @@ namespace schoolmanagement.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            // Include the Teacher navigation property to display Homeroom Teacher's name
-            var schoolDbContext = _context.Students.Include(s => s.Teacher);
+            // Include both Teacher and Class navigation properties for display on the Index page
+            var schoolDbContext = _context.Students
+                                          .Include(s => s.Teacher)
+                                          .Include(s => s.Class); // Added Class include
             return View(await schoolDbContext.ToListAsync());
         }
 
@@ -36,9 +38,10 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            // Include the Teacher navigation property for details view
+            // Include both Teacher and Class navigation properties for details view
             var student = await _context.Students
                 .Include(s => s.Teacher)
+                .Include(s => s.Class) // Added Class include
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -53,6 +56,8 @@ namespace schoolmanagement.Controllers
         {
             // Populate the dropdown list for teachers
             ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name");
+            // Populate the dropdown list for classes
+            ViewData["ClassId"] = new SelectList(_context.Classes, "ClassId", "Name");
             return View();
         }
 
@@ -61,10 +66,12 @@ namespace schoolmanagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,TeacherId")] Student student)
+        // ENSURE ClassId is included in the Bind attribute
+        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,TeacherId,ClassId")] Student student)
         {
             // ModelState.Remove("Teacher"); // Uncomment this line ONLY if you face issues with Teacher navigation property validation,
-                                          // but typically it's not needed if TeacherId is nullable and handled correctly.
+            // but typically it's not needed if TeacherId is nullable and handled correctly.
+            // ModelState.Remove("Class"); // Uncomment this line ONLY if you face issues with Class navigation property validation
 
             if (ModelState.IsValid)
             {
@@ -73,8 +80,9 @@ namespace schoolmanagement.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Re-populate the dropdown list if the model state is invalid and the view needs to be re-rendered
+            // Re-populate both dropdown lists if the model state is invalid and the view needs to be re-rendered
             ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", student.TeacherId);
+            ViewData["ClassId"] = new SelectList(_context.Classes, "ClassId", "Name", student.ClassId); // Repopulate Class dropdown
             return View(student);
         }
 
@@ -93,6 +101,8 @@ namespace schoolmanagement.Controllers
             }
             // Populate the dropdown list for teachers for the edit view
             ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", student.TeacherId);
+            // Populate the dropdown list for classes for the edit view
+            ViewData["ClassId"] = new SelectList(_context.Classes, "ClassId", "Name", student.ClassId); // Populate Class dropdown
             return View(student);
         }
 
@@ -101,7 +111,8 @@ namespace schoolmanagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,TeacherId")] Student student)
+        // ENSURE ClassId is included in the Bind attribute
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,TeacherId,ClassId")] Student student)
         {
             if (id != student.Id)
             {
@@ -109,6 +120,7 @@ namespace schoolmanagement.Controllers
             }
 
             // ModelState.Remove("Teacher"); // Uncomment this line ONLY if you face issues with Teacher navigation property validation
+            // ModelState.Remove("Class"); // Uncomment this line ONLY if you face issues with Class navigation property validation
 
             if (ModelState.IsValid)
             {
@@ -130,8 +142,9 @@ namespace schoolmanagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            // Re-populate the dropdown list if the model state is invalid
+            // Re-populate both dropdown lists if the model state is invalid
             ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Name", student.TeacherId);
+            ViewData["ClassId"] = new SelectList(_context.Classes, "ClassId", "Name", student.ClassId); // Repopulate Class dropdown
             return View(student);
         }
 
@@ -145,6 +158,7 @@ namespace schoolmanagement.Controllers
 
             var student = await _context.Students
                 .Include(s => s.Teacher)
+                .Include(s => s.Class) // Added Class include for Delete view
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
