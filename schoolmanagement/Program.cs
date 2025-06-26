@@ -13,7 +13,7 @@ builder.Services.AddControllersWithViews();
 // This line tells your application to use SchoolDbContext
 // and connect to a SQL Server database using the "DefaultConnection" string
 builder.Services.AddDbContext<SchoolDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
 
 var app = builder.Build();
 
@@ -27,11 +27,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection(); // Redirects HTTP requests to HTTPS
-app.UseStaticFiles();     // Serves static files like CSS, JavaScript, images
+app.UseStaticFiles();      // Serves static files like CSS, JavaScript, images
 
-app.UseRouting();         // Matches incoming requests to endpoints (like controller actions)
+app.UseRouting();          // Matches incoming requests to endpoints (like controller actions)
 
-app.UseAuthorization();   // Handles user authorization (if you add authentication later)
+app.UseAuthorization();    // Handles user authorization (if you add authentication later)
 
 // Maps default routing for MVC controllers (e.g., /Home/Index)
 app.MapControllerRoute(

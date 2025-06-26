@@ -34,7 +34,7 @@ namespace schoolmanagement.Controllers
             }
 
             var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
             if (subject == null)
             {
                 return NotFound();
@@ -50,11 +50,9 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Subjects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Subject subject)
+        public async Task<IActionResult> Create([Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +71,7 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
             if (subject == null)
             {
                 return NotFound();
@@ -82,13 +80,11 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Subjects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Subject subject)
+        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
         {
-            if (id != subject.Id)
+            if (id != subject.SubjectId) // <-- Changed from Id to SubjectId
             {
                 return NotFound();
             }
@@ -102,7 +98,7 @@ namespace schoolmanagement.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubjectExists(subject.Id))
+                    if (!SubjectExists(subject.SubjectId)) // <-- Changed from Id to SubjectId
                     {
                         return NotFound();
                     }
@@ -125,7 +121,7 @@ namespace schoolmanagement.Controllers
             }
 
             var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
             if (subject == null)
             {
                 return NotFound();
@@ -139,7 +135,7 @@ namespace schoolmanagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
+            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
             if (subject != null)
             {
                 _context.Subjects.Remove(subject);
@@ -151,7 +147,7 @@ namespace schoolmanagement.Controllers
 
         private bool SubjectExists(int id)
         {
-            return _context.Subjects.Any(e => e.Id == id);
+            return _context.Subjects.Any(e => e.SubjectId == id); // <-- Changed from Id to SubjectId
         }
     }
 }
