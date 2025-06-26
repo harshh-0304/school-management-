@@ -1,26 +1,35 @@
 // schoolmanagement/Models/Student.cs
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // For [ForeignKey]
 
-namespace schoolmanagement.Models 
+namespace schoolmanagement.Models
 {
     public class Student
     {
-        public int Id { get; set; } // Primary Key
+        public int Id { get; set; } 
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } 
+        public required string Name { get; set; } 
 
         [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        public string Gender { get; set; }
+        public required string Gender { get; set; }
 
         [Required]
         [Phone]
-        public string PhoneNumber { get; set; }
+        public required string PhoneNumber { get; set; }
+
+        // Foreign Key for Teacher (One-to-Many: Student -> Teacher)
+        [Display(Name = "Homeroom Teacher")] // Display name for UI
+        public int TeacherId { get; set; } 
+
+        // Navigation property to the Teacher
+        [ForeignKey("TeacherId")]
+        public Teacher Teacher { get; set; } = default!; // Default! tells the compiler it will be initialized
     }
 }
