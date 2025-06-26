@@ -31,5 +31,11 @@ namespace schoolmanagement.Models
         // Navigation property to the Teacher
         [ForeignKey("TeacherId")]
         public Teacher? Teacher { get; set; } // Changed from 'Teacher' to 'Teacher?'
+        // Foreign key for Class
+        [Display(Name = "Class")]
+        public int? ClassId { get; set; } // Make it nullable if a student might not be immediately assigned a class
+
+        [ForeignKey("ClassId")]
+        public Class Class { get; set; } // Navigation property
     }
 }

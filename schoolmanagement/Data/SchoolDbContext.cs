@@ -20,6 +20,7 @@ namespace schoolmanagement.Data // This namespace MUST match your project's 'Dat
         public DbSet<Teacher> Teachers { get; set; } // New: DbSet for the Teachers table
         public DbSet<Subject> Subjects { get; set; } // New: DbSet for the Subjects table
         public DbSet<TeacherSubject> TeacherSubjects { get; set; } // New: DbSet for the Teacher-Subject linking table
+        public DbSet<Class> Classes { get; set; }
 
         // --- OnModelCreating Method: This is where you define complex relationships not handled by convention ---
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,10 +59,10 @@ namespace schoolmanagement.Data // This namespace MUST match your project's 'Dat
                 .WithOne(s => s.Teacher)
                 // The foreign key in the Student table that links to Teacher is TeacherId.
                 .HasForeignKey(s => s.TeacherId);
-                // By default, EF Core might configure cascade delete here.
-                // If you want to prevent students from being deleted if their teacher is deleted,
-                // you would add: .OnDelete(DeleteBehavior.Restrict);
-                // But for now, the default behavior (often Cascade) is fine for initial setup.
+            // By default, EF Core might configure cascade delete here.
+            // If you want to prevent students from being deleted if their teacher is deleted,
+            // you would add: .OnDelete(DeleteBehavior.Restrict);
+            // But for now, the default behavior (often Cascade) is fine for initial setup.
         }
     }
 }
