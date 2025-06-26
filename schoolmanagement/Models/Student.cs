@@ -1,17 +1,17 @@
 // schoolmanagement/Models/Student.cs
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // For [ForeignKey]
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace schoolmanagement.Models
 {
     public class Student
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
         [Required]
         [StringLength(100)]
-        public required string Name { get; set; } 
+        public required string Name { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -24,12 +24,12 @@ namespace schoolmanagement.Models
         [Phone]
         public required string PhoneNumber { get; set; }
 
-        // Foreign Key for Teacher (One-to-Many: Student -> Teacher)
-        [Display(Name = "Homeroom Teacher")] // Display name for UI
-        public int TeacherId { get; set; } 
+        // --- CHANGE THIS LINE: Make TeacherId nullable by adding '?' ---
+        [Display(Name = "Homeroom Teacher")]
+        public int? TeacherId { get; set; } // Changed from 'int' to 'int?'
 
         // Navigation property to the Teacher
         [ForeignKey("TeacherId")]
-        public Teacher Teacher { get; set; } = default!; // Default! tells the compiler it will be initialized
+        public Teacher? Teacher { get; set; } // Changed from 'Teacher' to 'Teacher?'
     }
 }
