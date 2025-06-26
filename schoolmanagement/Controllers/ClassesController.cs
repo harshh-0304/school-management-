@@ -10,22 +10,22 @@ using schoolmanagement.Models;
 
 namespace schoolmanagement.Controllers
 {
-    public class SubjectsController : Controller
+    public class ClassesController : Controller
     {
         private readonly SchoolDbContext _context;
 
-        public SubjectsController(SchoolDbContext context)
+        public ClassesController(SchoolDbContext context)
         {
             _context = context;
         }
 
-        // GET: Subjects
+        // GET: Classes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Subjects.ToListAsync());
+            return View(await _context.Classes.ToListAsync());
         }
 
-        // GET: Subjects/Details/5
+        // GET: Classes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,37 +33,39 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
-            if (subject == null)
+            var @class = await _context.Classes
+                .FirstOrDefaultAsync(m => m.ClassId == id);
+            if (@class == null)
             {
                 return NotFound();
             }
 
-            return View(subject);
+            return View(@class);
         }
 
-        // GET: Subjects/Create
+        // GET: Classes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Subjects/Create
+        // POST: Classes/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
+        public async Task<IActionResult> Create([Bind("ClassId,Name,Description")] Class @class)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(subject);
+                _context.Add(@class);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+            return View(@class);
         }
 
-        // GET: Subjects/Edit/5
+        // GET: Classes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -71,20 +73,22 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
-            if (subject == null)
+            var @class = await _context.Classes.FindAsync(id);
+            if (@class == null)
             {
                 return NotFound();
             }
-            return View(subject);
+            return View(@class);
         }
 
-        // POST: Subjects/Edit/5
+        // POST: Classes/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
+        public async Task<IActionResult> Edit(int id, [Bind("ClassId,Name,Description")] Class @class)
         {
-            if (id != subject.SubjectId) // <-- Changed from Id to SubjectId
+            if (id != @class.ClassId)
             {
                 return NotFound();
             }
@@ -93,12 +97,12 @@ namespace schoolmanagement.Controllers
             {
                 try
                 {
-                    _context.Update(subject);
+                    _context.Update(@class);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubjectExists(subject.SubjectId)) // <-- Changed from Id to SubjectId
+                    if (!ClassExists(@class.ClassId))
                     {
                         return NotFound();
                     }
@@ -109,10 +113,10 @@ namespace schoolmanagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+            return View(@class);
         }
 
-        // GET: Subjects/Delete/5
+        // GET: Classes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -120,34 +124,34 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
-            if (subject == null)
+            var @class = await _context.Classes
+                .FirstOrDefaultAsync(m => m.ClassId == id);
+            if (@class == null)
             {
                 return NotFound();
             }
 
-            return View(subject);
+            return View(@class);
         }
 
-        // POST: Subjects/Delete/5
+        // POST: Classes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
-            if (subject != null)
+            var @class = await _context.Classes.FindAsync(id);
+            if (@class != null)
             {
-                _context.Subjects.Remove(subject);
+                _context.Classes.Remove(@class);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SubjectExists(int id)
+        private bool ClassExists(int id)
         {
-            return _context.Subjects.Any(e => e.SubjectId == id); // <-- Changed from Id to SubjectId
+            return _context.Classes.Any(e => e.ClassId == id);
         }
     }
 }

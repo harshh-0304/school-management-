@@ -6,7 +6,7 @@ namespace schoolmanagement.Models
 {
     public class Subject
     {
-        public int Id { get; set; }
+        public int SubjectId { get; set; } // <--- CHANGED FROM 'Id' to 'SubjectId'
 
         [Required]
         [StringLength(100)]
