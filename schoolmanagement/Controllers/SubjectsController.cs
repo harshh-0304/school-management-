@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
+using Microsoft.AspNetCore.Authorization;
+
 using schoolmanagement.Models;
 
 namespace schoolmanagement.Controllers
 {
+      [Authorize] 
     public class SubjectsController : Controller
     {
         private readonly SchoolDbContext _context;

@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Required for SelectList
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
+using Microsoft.AspNetCore.Authorization;
 using schoolmanagement.Models;
 
 namespace schoolmanagement.Controllers
 {
+     [Authorize] 
     public class StudentsController : Controller
     {
         private readonly SchoolDbContext _context;

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
 using schoolmanagement.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace schoolmanagement.Controllers
 {
+    [Authorize] 
     public class TeachersController : Controller
     {
         private readonly SchoolDbContext _context;
