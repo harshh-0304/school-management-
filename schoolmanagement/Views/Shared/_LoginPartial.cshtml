@@ -1,34 +1,5 @@
-@* @using Microsoft.AspNetCore.Identity
-@using schoolmanagement.Models.Auth
-
-
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-
-<ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
-</ul> *@
 @using Microsoft.AspNetCore.Identity
-@using schoolmanagement.Models.Auth // Ensure your ApplicationUser namespace is here
+@using schoolmanagement.Models.Auth 
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -38,25 +9,22 @@ else
 {
     // Get the current logged-in user
     var user = await UserManager.GetUserAsync(User);
+    
+    // Safely get the user's name. Fallback to email if name is not available.
+    var userName = user?.Name ?? user?.Email ?? "Anonymous"; 
 
-    // Check if the user is an Admin
-    var isAdmin = false;
-    if (user != null)
+    <li class="nav-item me-3">
+        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage" title="Manage">Hello @userName!</a>
+    </li>
+    
+    // Check if the user is an Admin, only if 'user' is not null
+    @if (user != null && await UserManager.IsInRoleAsync(user, "Admin"))
     {
-        isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
-    }
-
-    // Display Admin Panel link ONLY if the user is an Admin
-    @if (isAdmin)
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark-emphasis px-3 py-2 rounded hover-bg-light transition" asp-controller="Admin" asp-action="Index">Admin Panel</a>
+        <li class="nav-item me-3">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Panel</a>
         </li>
     }
-
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
+    
     <li class="nav-item">
         <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
@@ -65,13 +33,11 @@ else
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark-emphasis px-3 py-2 rounded hover-bg-light transition" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    <li class="nav-item me-3">
+        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark-emphasis px-3 py-2 rounded hover-bg-light transition" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
 }
 </ul>
-
-@* Note: The "transition" and "hover-bg-light" classes assume your _Layout.cshtml (or a linked CSS file) defines these custom styles. *@
