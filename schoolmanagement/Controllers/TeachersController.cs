@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
 using schoolmanagement.Models;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; // Required for [Authorize] attribute
 
 namespace schoolmanagement.Controllers
 {
-    [Authorize] 
+    // Authorize attribute at controller level to ensure all actions require authentication.
+    [Authorize]
     public class TeachersController : Controller
     {
         private readonly SchoolDbContext _context;
@@ -22,15 +23,17 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Teachers
+        // Any authenticated user can view the list of teachers.
         public async Task<IActionResult> Index()
         {
             return View(await _context.Teachers.ToListAsync());
         }
 
         // GET: Teachers/Details/5
+        // Any authenticated user can view teacher details.
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Teachers == null)
             {
                 return NotFound();
             }
@@ -46,17 +49,19 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Teachers/Create
+        // Only Admin users can access the Create page.
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Teachers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only Admin users can create new teachers.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,SubjectExpertise,PhoneNumber")] Teacher teacher)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,Email")] Teacher teacher)
         {
             if (ModelState.IsValid)
             {
@@ -68,9 +73,11 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Teachers/Edit/5
+        // Only Admin users can access the Edit page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Teachers == null)
             {
                 return NotFound();
             }
@@ -84,11 +91,11 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Teachers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only Admin users can save edits to teachers.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,SubjectExpertise,PhoneNumber")] Teacher teacher)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateOfBirth,Gender,PhoneNumber,Email")] Teacher teacher)
         {
             if (id != teacher.Id)
             {
@@ -119,9 +126,11 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Teachers/Delete/5
+        // Only Admin users can access the Delete confirmation page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Teachers == null)
             {
                 return NotFound();
             }
@@ -137,23 +146,29 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Teachers/Delete/5
+        // Only Admin users can delete teachers.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (_context.Teachers == null)
+            {
+                return Problem("Entity set 'SchoolDbContext.Teachers' is null.");
+            }
             var teacher = await _context.Teachers.FindAsync(id);
             if (teacher != null)
             {
                 _context.Teachers.Remove(teacher);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TeacherExists(int id)
         {
-            return _context.Teachers.Any(e => e.Id == id);
+          return (_context.Teachers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

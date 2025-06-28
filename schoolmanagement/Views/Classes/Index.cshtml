@@ -1,16 +1,21 @@
 @model IEnumerable<schoolmanagement.Models.Class>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Classes";
 }
 
-<h1>Index</h1>
+<h1>Classes</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+@* Only show Create New button if the current user is in the "Admin" role *@
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2">Create New Class</a>
+    </p>
+}
+
+<table class="table table-hover table-striped border rounded-3 overflow-hidden mt-3">
+    <thead class="bg-primary text-white">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -18,7 +23,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th></th>
+            @* Only show Actions column if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -30,11 +39,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ClassId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ClassId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ClassId">Delete</a>
-            </td>
+            @* Only show Edit/Details/Delete links if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ClassId" class="btn btn-sm btn-info text-white rounded-pill px-3 me-2">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.ClassId" class="btn btn-sm btn-secondary rounded-pill px-3 me-2">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.ClassId" class="btn btn-sm btn-danger rounded-pill px-3">Delete</a>
+                </td>
+            }
         </tr>
 }
     </tbody>

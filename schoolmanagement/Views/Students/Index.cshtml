@@ -6,11 +6,16 @@
 
 <h1>Students</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+@* Check if the current user is in the "Admin" role *@
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2">Create New Student</a>
+    </p>
+}
+
+<table class="table table-hover table-striped border rounded-3 overflow-hidden mt-3">
+    <thead class="bg-primary text-white">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -30,7 +35,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.Teacher)
             </th>
-            <th></th>
+            @* Only show Actions column if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -49,18 +58,20 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                @* FIXED: Display "Unassigned" if Class is null, otherwise display Class Name *@
-                @(item.Class?.Name ?? "Unassigned")
+                @item.Class?.Name
             </td>
             <td>
-                @* FIXED: Display "Unassigned" if Teacher is null, otherwise display Teacher Name *@
-                @(item.Teacher?.Name ?? "Unassigned")
+                @item.Teacher?.Name
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            @* Only show Edit/Details/Delete links if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white rounded-pill px-3 me-2">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-secondary rounded-pill px-3 me-2">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger rounded-pill px-3">Delete</a>
+                </td>
+            }
         </tr>
 }
     </tbody>

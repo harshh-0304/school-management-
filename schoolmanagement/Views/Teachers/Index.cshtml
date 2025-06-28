@@ -1,27 +1,36 @@
 @model IEnumerable<schoolmanagement.Models.Teacher>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Teachers"; // Keeping title as "Teachers" for clarity
 }
 
-<h1>Index</h1>
+<h1>Teachers</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+@* Only show Create New button if the current user is in the "Admin" role *@
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2">Create New Teacher</a>
+    </p>
+}
+
+<table class="table table-hover table-striped border rounded-3 overflow-hidden mt-3">
+    <thead class="bg-primary text-white">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SubjectExpertise)
+                @Html.DisplayNameFor(model => model.SubjectExpertise) @* Updated to SubjectExpertise *@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
-            <th></th>
+            @* Only show Actions column if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -31,16 +40,20 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SubjectExpertise)
+                @Html.DisplayFor(modelItem => item.SubjectExpertise) @* Updated to SubjectExpertise *@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            @* Only show Edit/Details/Delete links if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white rounded-pill px-3 me-2">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-secondary rounded-pill px-3 me-2">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger rounded-pill px-3">Delete</a>
+                </td>
+            }
         </tr>
 }
     </tbody>

@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
-using schoolmanagement.Models; // Ensure this is present for your models
+using schoolmanagement.Models;
+using Microsoft.AspNetCore.Authorization; // Required for [Authorize] attribute
 
 namespace schoolmanagement.Controllers
 {
+    // Authorize attribute at controller level to ensure all actions require authentication.
+    [Authorize]
     public class ClassesController : Controller
     {
         private readonly SchoolDbContext _context;
@@ -20,21 +23,23 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Classes
+        // Any authenticated user can view the list of classes.
         public async Task<IActionResult> Index()
         {
             return View(await _context.Classes.ToListAsync());
         }
 
         // GET: Classes/Details/5
+        // Any authenticated user can view class details.
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Classes == null)
             {
                 return NotFound();
             }
 
             var @class = await _context.Classes
-                .FirstOrDefaultAsync(m => m.ClassId == id); // Use ClassId
+                .FirstOrDefaultAsync(m => m.ClassId == id);
             if (@class == null)
             {
                 return NotFound();
@@ -44,17 +49,19 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Classes/Create
+        // Only Admin users can access the Create page.
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Classes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only Admin users can create new classes.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClassId,Name,Description")] Class @class) // Use ClassId and Description
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("ClassId,Name,Description")] Class @class)
         {
             if (ModelState.IsValid)
             {
@@ -66,9 +73,11 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Classes/Edit/5
+        // Only Admin users can access the Edit page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Classes == null)
             {
                 return NotFound();
             }
@@ -82,13 +91,13 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Classes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Only Admin users can save edits to classes.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClassId,Name,Description")] Class @class) // Use ClassId and Description
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("ClassId,Name,Description")] Class @class)
         {
-            if (id != @class.ClassId) // Compare with ClassId
+            if (id != @class.ClassId)
             {
                 return NotFound();
             }
@@ -102,7 +111,7 @@ namespace schoolmanagement.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClassExists(@class.ClassId)) // Check ClassId
+                    if (!ClassExists(@class.ClassId))
                     {
                         return NotFound();
                     }
@@ -117,15 +126,17 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Classes/Delete/5
+        // Only Admin users can access the Delete confirmation page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Classes == null)
             {
                 return NotFound();
             }
 
             var @class = await _context.Classes
-                .FirstOrDefaultAsync(m => m.ClassId == id); // Use ClassId
+                .FirstOrDefaultAsync(m => m.ClassId == id);
             if (@class == null)
             {
                 return NotFound();
@@ -135,32 +146,29 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Classes/Delete/5
+        // Only Admin users can delete classes.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (_context.Classes == null)
+            {
+                return Problem("Entity set 'SchoolDbContext.Classes' is null.");
+            }
             var @class = await _context.Classes.FindAsync(id);
             if (@class != null)
             {
-                // === CRITICAL FIX: Delete dependent Students first ===
-                var dependentStudents = await _context.Students
-                                                        .Where(s => s.ClassId == id) // Find students linked to this ClassId
-                                                        .ToListAsync();
-
-                _context.Students.RemoveRange(dependentStudents); // Remove all dependent students
-
-                _context.Classes.Remove(@class); // Now remove the class
-                // ====================================================
-
-                await _context.SaveChangesAsync();
+                _context.Classes.Remove(@class);
             }
             
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClassExists(int id)
         {
-            return _context.Classes.Any(e => e.ClassId == id); // Use ClassId
+          return (_context.Classes?.Any(e => e.ClassId == id)).GetValueOrDefault();
         }
     }
 }
