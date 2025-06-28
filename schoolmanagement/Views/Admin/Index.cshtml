@@ -1,3 +1,5 @@
+@model schoolmanagement.ViewModels.AdminDashboardViewModel 
+
 @{
     ViewData["Title"] = "Admin Dashboard"; // Matches the ViewData["Title"] in the controller
 }
@@ -11,6 +13,53 @@
         <p class="lead text-center mb-5 text-muted">
             Welcome to your central command center. Efficiently manage users, roles, and gain insights into your school's operations.
         </p>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-4 transition hover-shadow-lg hover-translate-y-n2 text-center bg-light">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-primary">
+                            <i class="bi bi-person-fill" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="card-title fs-4 fw-bold mb-2">Total Students</h3>
+                        <p class="card-text display-5 fw-bold text-primary">@Model.TotalStudents</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-4 transition hover-shadow-lg hover-translate-y-n2 text-center bg-light">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-success">
+                            <i class="bi bi-person-badge-fill" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="card-title fs-4 fw-bold mb-2">Total Teachers</h3>
+                        <p class="card-text display-5 fw-bold text-success">@Model.TotalTeachers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-4 transition hover-shadow-lg hover-translate-y-n2 text-center bg-light">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-info">
+                            <i class="bi bi-book-fill" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="card-title fs-4 fw-bold mb-2">Total Classes</h3>
+                        <p class="card-text display-5 fw-bold text-info">@Model.TotalClasses</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-4 transition hover-shadow-lg hover-translate-y-n2 text-center bg-light">
+                    <div class="card-body p-4">
+                        <div class="mb-3 text-warning">
+                            <i class="bi bi-journal-text" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="card-title fs-4 fw-bold mb-2">Total Subjects</h3>
+                        <p class="card-text display-5 fw-bold text-warning">@Model.TotalSubjects</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row row-cols-1 row-cols-md-2 g-4">
             <div class="col">

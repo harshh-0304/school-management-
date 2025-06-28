@@ -1,35 +1,53 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity; // Required for UserManager/RoleManager
-using schoolmanagement.Models.Auth; // Required for ApplicationUser
-using schoolmanagement.ViewModels; // Crucial for UserViewModel, EditUserViewModel
+using Microsoft.AspNetCore.Identity;
+using schoolmanagement.Data; // <--- ADDED for SchoolDbContext
+using schoolmanagement.Models.Auth;
+using schoolmanagement.ViewModels; // Crucial for UserViewModel, EditUserViewModel, AdminDashboardViewModel
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; // Required for .ToListAsync()
+using Microsoft.EntityFrameworkCore;
 
 namespace schoolmanagement.Controllers
 {
-    // This attribute restricts access to this entire controller to users in the "Admin" role only.
+
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SchoolDbContext _context; // <--- ADDED for database access
 
-        // Constructor to inject UserManager and RoleManager
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        // Constructor to inject UserManager, RoleManager, and SchoolDbContext
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SchoolDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context; // <--- Assigned here
         }
 
         // GET: /Admin/Index
-        // Main entry point for the Admin Dashboard.
-        public IActionResult Index()
+        // Main entry point for the Admin Dashboard. Now fetches counts.
+        public async Task<IActionResult> Index() // Make it async
         {
             ViewData["Title"] = "Admin Dashboard";
-            return View();
+
+            // Fetch counts from the database
+            var totalStudents = await _context.Students.CountAsync();
+            var totalTeachers = await _context.Teachers.CountAsync();
+            var totalClasses = await _context.Classes.CountAsync(); // Fetching for completeness
+            var totalSubjects = await _context.Subjects.CountAsync(); // Fetching for completeness
+
+            var model = new AdminDashboardViewModel
+            {
+                TotalStudents = totalStudents,
+                TotalTeachers = totalTeachers,
+                TotalClasses = totalClasses,
+                TotalSubjects = totalSubjects
+            };
+
+            return View(model); // Pass the model to the view
         }
 
         // GET: /Admin/ManageUsers
@@ -38,28 +56,31 @@ namespace schoolmanagement.Controllers
         {
             ViewData["Title"] = "Manage Users";
 
-            // Get all ApplicationUsers from the database
+
+
             var users = await _userManager.Users.ToListAsync();
 
-            // Create a list to hold UserViewModel objects, which will be passed to the view
+
             var usersWithRoles = new List<UserViewModel>();
 
-            // Iterate through each user to get their roles
+
             foreach (var user in users)
+
             {
-                // Get the roles assigned to the current user
+
                 var roles = await _userManager.GetRolesAsync(user);
 
-                // Create a new UserViewModel instance for the current user
+
                 usersWithRoles.Add(new UserViewModel
+
                 {
-                    Id = user.Id!, // Use null-forgiving operator as Id is typically non-null
-                    Email = user.Email!, // Use null-forgiving operator for Email
-                    Roles = roles.ToList() // List of roles (e.g., "Admin", "Teacher")
+                    Id = user.Id!,
+                    Email = user.Email!,
+                    Roles = roles.ToList()
                 });
             }
 
-            // Pass the populated list of usersWithRoles to the ManageUsers view
+
             return View(usersWithRoles);
         }
 
@@ -78,9 +99,9 @@ namespace schoolmanagement.Controllers
                 return NotFound();
             }
 
-            // Get all roles from the database
+
             var allRoles = await _roleManager.Roles.ToListAsync();
-            // Get roles currently assigned to this user
+
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var model = new EditUserViewModel
@@ -102,7 +123,7 @@ namespace schoolmanagement.Controllers
         // POST: /Admin/EditUser/{id}
         // Processes the form submission for editing a user.
         [HttpPost]
-        [ValidateAntiForgeryToken] // Protects against Cross-Site Request Forgery (CSRF) attacks
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(string id, EditUserViewModel model)
         {
             if (id != model.Id)
@@ -118,7 +139,7 @@ namespace schoolmanagement.Controllers
                     return NotFound();
                 }
 
-                // Update user email (if changed)
+
                 if (user.Email != model.Email)
                 {
                     var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
@@ -128,15 +149,15 @@ namespace schoolmanagement.Controllers
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        // If email update fails, redisplay form with errors
+
                         model.AllRoles = (await _roleManager.Roles.ToListAsync())
                             .Select(r => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = r.Name, Value = r.Name })
                             .ToList();
                         return View(model);
                     }
-                    // UserName is typically derived from Email for Identity, so update it too
+
                     var setUserNameResult = await _userManager.SetUserNameAsync(user, model.Email);
-                     if (!setUserNameResult.Succeeded)
+                    if (!setUserNameResult.Succeeded)
                     {
                         foreach (var error in setUserNameResult.Errors)
                         {
@@ -150,12 +171,18 @@ namespace schoolmanagement.Controllers
                 }
 
 
-                // Update user roles
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var selectedRoles = model.SelectedRoles ?? new List<string>(); // Handle null SelectedRoles
 
-                // Remove roles not selected
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var selectedRoles = model.SelectedRoles ?? new List<string>();
+
+
+
+
+
                 var rolesToRemove = userRoles.Except(selectedRoles);
+
+
+
                 if (rolesToRemove.Any())
                 {
                     var removeResult = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
@@ -164,8 +191,9 @@ namespace schoolmanagement.Controllers
                         foreach (var error in removeResult.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
+
                         }
-                        // If role update fails, redisplay form with errors
+
                         model.AllRoles = (await _roleManager.Roles.ToListAsync())
                             .Select(r => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = r.Name, Value = r.Name })
                             .ToList();
@@ -173,7 +201,7 @@ namespace schoolmanagement.Controllers
                     }
                 }
 
-                // Add roles newly selected
+
                 var rolesToAdd = selectedRoles.Except(userRoles);
                 if (rolesToAdd.Any())
                 {
@@ -184,7 +212,7 @@ namespace schoolmanagement.Controllers
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        // If role update fails, redisplay form with errors
+
                         model.AllRoles = (await _roleManager.Roles.ToListAsync())
                             .Select(r => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = r.Name, Value = r.Name })
                             .ToList();
@@ -196,7 +224,7 @@ namespace schoolmanagement.Controllers
                 return RedirectToAction(nameof(ManageUsers));
             }
 
-            // If ModelState is not valid, re-populate AllRoles and return the view
+
             model.AllRoles = (await _roleManager.Roles.ToListAsync())
                 .Select(r => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = r.Name, Value = r.Name })
                 .ToList();
@@ -246,8 +274,7 @@ namespace schoolmanagement.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                // If deletion fails, return to the confirmation page with errors
-                return View("DeleteUser", user); // Pass the user back to the delete view
+                return View("DeleteUser", user);
             }
         }
     }

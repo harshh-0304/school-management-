@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
-using schoolmanagement.Models;
+using schoolmanagement.Models; // Ensure this is present for your models
 
 namespace schoolmanagement.Controllers
 {
-    [Authorize] 
     public class ClassesController : Controller
     {
         private readonly SchoolDbContext _context;
@@ -36,7 +34,7 @@ namespace schoolmanagement.Controllers
             }
 
             var @class = await _context.Classes
-                .FirstOrDefaultAsync(m => m.ClassId == id);
+                .FirstOrDefaultAsync(m => m.ClassId == id); // Use ClassId
             if (@class == null)
             {
                 return NotFound();
@@ -56,7 +54,7 @@ namespace schoolmanagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClassId,Name,Description")] Class @class)
+        public async Task<IActionResult> Create([Bind("ClassId,Name,Description")] Class @class) // Use ClassId and Description
         {
             if (ModelState.IsValid)
             {
@@ -88,9 +86,9 @@ namespace schoolmanagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClassId,Name,Description")] Class @class)
+        public async Task<IActionResult> Edit(int id, [Bind("ClassId,Name,Description")] Class @class) // Use ClassId and Description
         {
-            if (id != @class.ClassId)
+            if (id != @class.ClassId) // Compare with ClassId
             {
                 return NotFound();
             }
@@ -104,7 +102,7 @@ namespace schoolmanagement.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClassExists(@class.ClassId))
+                    if (!ClassExists(@class.ClassId)) // Check ClassId
                     {
                         return NotFound();
                     }
@@ -127,7 +125,7 @@ namespace schoolmanagement.Controllers
             }
 
             var @class = await _context.Classes
-                .FirstOrDefaultAsync(m => m.ClassId == id);
+                .FirstOrDefaultAsync(m => m.ClassId == id); // Use ClassId
             if (@class == null)
             {
                 return NotFound();
@@ -144,16 +142,25 @@ namespace schoolmanagement.Controllers
             var @class = await _context.Classes.FindAsync(id);
             if (@class != null)
             {
-                _context.Classes.Remove(@class);
-            }
+                // === CRITICAL FIX: Delete dependent Students first ===
+                var dependentStudents = await _context.Students
+                                                        .Where(s => s.ClassId == id) // Find students linked to this ClassId
+                                                        .ToListAsync();
 
-            await _context.SaveChangesAsync();
+                _context.Students.RemoveRange(dependentStudents); // Remove all dependent students
+
+                _context.Classes.Remove(@class); // Now remove the class
+                // ====================================================
+
+                await _context.SaveChangesAsync();
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClassExists(int id)
         {
-            return _context.Classes.Any(e => e.ClassId == id);
+            return _context.Classes.Any(e => e.ClassId == id); // Use ClassId
         }
     }
 }

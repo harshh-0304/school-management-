@@ -49,10 +49,12 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                @item.Class?.Name @* FIXED: Used null-conditional operator for Class Name *@
+                @* FIXED: Display "Unassigned" if Class is null, otherwise display Class Name *@
+                @(item.Class?.Name ?? "Unassigned")
             </td>
             <td>
-                @item.Teacher?.Name @* FIXED: Used null-conditional operator for Teacher Name *@
+                @* FIXED: Display "Unassigned" if Teacher is null, otherwise display Teacher Name *@
+                @(item.Teacher?.Name ?? "Unassigned")
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
