@@ -1,31 +1,62 @@
-html {
-  font-size: 14px;
+/* Custom styles for the homepage (extracted from Index.cshtml) */
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #1a148c; /* Matches bg-primary-custom, or gradient start color */
+    background-image: url('');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensures particles are behind text but within header */
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.hero-content {
+    position: relative;
+    z-index: 2; /* Ensures text is above particles */
+    color: #fff;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Custom colors for Bootstrap if default ones don't match previous intent */
+/* Primary (Indigo-like) */
+.bg-primary-custom { background-color: #4f46e5 !important; } /* A strong indigo */
+.text-primary-custom { color: #4f46e5 !important; }
+.btn-primary-custom {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+.btn-primary-custom:hover {
+    background-color: #4338ca;
+    border-color: #4338ca;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Secondary (Purple-like) for gradient */
+.bg-gradient-custom {
+    background: linear-gradient(to right, #2e2992, #6745b8); /* Indigo to Purple */
 }
 
-body {
-  margin-bottom: 60px;
-}
+/* Feature icons (using Bootstrap's text utilities, or custom if needed) */
+.icon-student { color: #3f44e5; } /* Indigo */
+.icon-teacher { color: #22c55e; } /* Green */
+.icon-class { color: #3b82f6; }  /* Blue */
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Custom transition for hover effects */
+.transition {
+    transition: all 0.3s ease-in-out;
 }
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.hover-scale-105:hover {
+    transform: scale(1.05);
+}
+.hover-shadow-lg:hover {
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; /* Bootstrap's shadow-lg value */
+}
+.hover-translate-y-n2:hover {
+    transform: translateY(-0.5rem); /* Equivalent to -0.5rem */
+}
+.hover-bg-light:hover {
+    background-color: var(--bs-light) !important; /* Use Bootstrap variable for consistency */
 }

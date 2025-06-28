@@ -333,9 +333,9 @@ C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compre
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\nezrqnk58p-muycvpuwrr.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\v0zgfp0y55-87fc7y1x7t.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\yfc7ypekbg-mlv21k5csn.gz
-C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\1d6ld32e4n-b9sayid5wm.gz
+C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\1d6ld32e4n-h1zpqicuww.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\nsbt6j7dis-61n19gt1b8.gz
-C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\fbn5d0pwxd-xtxxf3hu2r.gz
+C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\fbn5d0pwxd-eckbkih6xf.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\ni3nwr0h33-bqjiyaj88i.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\cyidduy88z-c2jlpeoesf.gz
 C:\Users\bakas\Desktop\schoolmanagement\schoolmanagement\obj\Debug\net9.0\compressed\0mnv29hpcd-erw9l3u2r3.gz
