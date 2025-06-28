@@ -101,7 +101,8 @@
             {
                 UserName = adminEmail,
                 Email = adminEmail,
-                EmailConfirmed = true // Set to true for dev convenience, remove or handle email confirmation for production
+                EmailConfirmed = true, // Set to true for dev convenience, remove or handle email confirmation for production
+                Name = adminEmail // FIXED: Initializing the required 'Name' property
             };
 
             // Attempt to create the user with the given password

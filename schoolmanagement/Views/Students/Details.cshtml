@@ -1,54 +1,63 @@
 @model schoolmanagement.Models.Student
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Details";
 }
 
-<h1>Details</h1>
+<div class="container py-5">
+    <div class="card shadow-lg rounded-3 border-0 p-4">
+        <h1 class="card-title text-center mb-4 fw-bold text-primary">@ViewData["Title"]</h1>
+        <hr class="mb-4">
 
-<div>
-    <h4>Student</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateOfBirth)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Class) @* Corrected placement of DisplayNameFor *@
-        </dt>
-        <dd class = "col-sm-10">
-            @Model.Class?.Name @* Safely display Class Name using null-conditional operator *@
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Teacher) @* Added Teacher display for completeness *@
-        </dt>
-        <dd class = "col-sm-10">
-            @Model.Teacher?.Name @* Safely display Teacher Name using null-conditional operator *@
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <h4 class="text-center mb-4">Student: @Model.Name</h4>
+
+        <dl class="row justify-content-center">
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class = "col-sm-7">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </dt>
+            <dd class = "col-sm-7">
+                @Html.DisplayFor(model => model.DateOfBirth)
+            </dd>
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+            <dd class = "col-sm-7">
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd class = "col-sm-7">
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.Class)
+            </dt>
+            <dd class = "col-sm-7">
+                @Model.Class?.Name
+            </dd>
+            <dt class = "col-sm-3 text-end">
+                @Html.DisplayNameFor(model => model.Teacher)
+            </dt>
+            <dd class = "col-sm-7">
+                @Model.Teacher?.Name
+            </dd>
+        </dl>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+            @* Only show Edit and Delete links if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary rounded-pill px-4 py-2 me-md-2">Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger rounded-pill px-4 py-2 me-md-2">Delete</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary rounded-pill px-4 py-2">Back to List</a>
+        </div>
+    </div>
 </div>

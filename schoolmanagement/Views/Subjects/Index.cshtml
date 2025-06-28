@@ -6,37 +6,43 @@
 
 <h1>Subjects</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+@* Only show Create New button if the current user is in the "Admin" role *@
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2">Create New Subject</a>
+    </p>
+}
+
+<table class="table table-hover table-striped border rounded-3 overflow-hidden mt-3">
+    <thead class="bg-warning text-white"> @* Changed to bg-warning for Subjects *@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th></th>
+            @* Only show Actions column if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            @* Only show Edit/Details/Delete links if the user is Admin *@
+            @if (User.IsInRole("Admin"))
+            {
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Edit" asp-route-id="@item.SubjectId" class="btn btn-sm btn-info text-white rounded-pill px-3 me-2">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.SubjectId" class="btn btn-sm btn-secondary rounded-pill px-3 me-2">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.SubjectId" class="btn btn-sm btn-danger rounded-pill px-3">Delete</a>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> | <!-- Changed from Id to SubjectId -->
-                    <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> | <!-- Changed from Id to SubjectId -->
-                    <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a> <!-- Changed from Id to SubjectId -->
-                </td>
-            </tr>
-        }
+            }
+        </tr>
+}
     </tbody>
 </table>

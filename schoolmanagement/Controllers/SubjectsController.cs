@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using schoolmanagement.Data;
-using Microsoft.AspNetCore.Authorization;
-
 using schoolmanagement.Models;
+using Microsoft.AspNetCore.Authorization; // Required for [Authorize] attribute
 
 namespace schoolmanagement.Controllers
 {
-      [Authorize] 
+    // Authorize attribute at controller level to ensure all actions require authentication.
+    [Authorize]
     public class SubjectsController : Controller
     {
         private readonly SchoolDbContext _context;
@@ -23,21 +23,23 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Subjects
+        // Any authenticated user can view the list of subjects.
         public async Task<IActionResult> Index()
         {
             return View(await _context.Subjects.ToListAsync());
         }
 
         // GET: Subjects/Details/5
+        // Any authenticated user can view subject details.
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Subjects == null)
             {
                 return NotFound();
             }
 
             var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
+                .FirstOrDefaultAsync(m => m.SubjectId == id);
             if (subject == null)
             {
                 return NotFound();
@@ -47,15 +49,19 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Subjects/Create
+        // Only Admin users can access the Create page.
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Subjects/Create
+        // Only Admin users can create new subjects.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("SubjectId,Name")] Subject subject)
         {
             if (ModelState.IsValid)
             {
@@ -67,14 +73,16 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Subjects/Edit/5
+        // Only Admin users can access the Edit page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Subjects == null)
             {
                 return NotFound();
             }
 
-            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
+            var subject = await _context.Subjects.FindAsync(id);
             if (subject == null)
             {
                 return NotFound();
@@ -83,11 +91,13 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Subjects/Edit/5
+        // Only Admin users can save edits to subjects.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name,Description")] Subject subject) // <-- Changed "Id" to "SubjectId" in Bind
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name")] Subject subject)
         {
-            if (id != subject.SubjectId) // <-- Changed from Id to SubjectId
+            if (id != subject.SubjectId)
             {
                 return NotFound();
             }
@@ -101,7 +111,7 @@ namespace schoolmanagement.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubjectExists(subject.SubjectId)) // <-- Changed from Id to SubjectId
+                    if (!SubjectExists(subject.SubjectId))
                     {
                         return NotFound();
                     }
@@ -116,15 +126,17 @@ namespace schoolmanagement.Controllers
         }
 
         // GET: Subjects/Delete/5
+        // Only Admin users can access the Delete confirmation page.
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Subjects == null)
             {
                 return NotFound();
             }
 
             var subject = await _context.Subjects
-                .FirstOrDefaultAsync(m => m.SubjectId == id); // <-- Changed from Id to SubjectId
+                .FirstOrDefaultAsync(m => m.SubjectId == id);
             if (subject == null)
             {
                 return NotFound();
@@ -134,23 +146,29 @@ namespace schoolmanagement.Controllers
         }
 
         // POST: Subjects/Delete/5
+        // Only Admin users can delete subjects.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id); // FindAsync works with PK, which is now SubjectId
+            if (_context.Subjects == null)
+            {
+                return Problem("Entity set 'SchoolDbContext.Subjects' is null.");
+            }
+            var subject = await _context.Subjects.FindAsync(id);
             if (subject != null)
             {
                 _context.Subjects.Remove(subject);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubjectExists(int id)
         {
-            return _context.Subjects.Any(e => e.SubjectId == id); // <-- Changed from Id to SubjectId
+          return (_context.Subjects?.Any(e => e.SubjectId == id)).GetValueOrDefault();
         }
     }
 }
