@@ -34,11 +34,17 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
-         <dt class = "col-sm-2"></dt>
-            @Html.DisplayNameFor(model => model.Class) @* ADD THIS LINE *@
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Class) @* Corrected placement of DisplayNameFor *@
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Class.Name) @* ADD THIS LINE *@
+            @Model.Class?.Name @* Safely display Class Name using null-conditional operator *@
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Teacher) @* Added Teacher display for completeness *@
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.Teacher?.Name @* Safely display Teacher Name using null-conditional operator *@
         </dd>
     </dl>
 </div>
