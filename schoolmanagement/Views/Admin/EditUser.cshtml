@@ -1,0 +1,52 @@
+@model schoolmanagement.ViewModels.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="container py-5">
+    <div class="card shadow-lg rounded-3 border-0 p-4">
+        <h1 class="card-title text-center mb-4 fw-bold text-primary">@ViewData["Title"]</h1>
+        <hr class="mb-4">
+
+        <form asp-action="EditUser" asp-controller="Admin" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="Id" /> @* Hidden field for User Id *@
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control rounded-pill px-4 py-2" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <h4 class="mt-4 mb-3">Assign Roles</h4>
+            <div class="card p-3 mb-4">
+                @foreach (var role in Model.AllRoles)
+                {
+                    <div class="form-check">
+                        <input type="checkbox"
+                               name="SelectedRoles" @* Name must match the property in EditUserViewModel *@
+                               value="@role.Value"
+                               class="form-check-input"
+                               id="@("role_" + role.Value)" @* Unique ID for each checkbox *@
+                               @(role.Selected ? "checked" : "") @* Check if role is already assigned *@
+                        />
+                        <label class="form-check-label" for="@("role_" + role.Value)">@role.Text</label>
+                    </div>
+                }
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+                <button type="submit" class="btn btn-lg btn-primary rounded-pill py-3 fw-bold">Save Changes</button>
+            </div>
+            <div class="text-center">
+                <a asp-action="ManageUsers" class="btn btn-outline-secondary rounded-pill">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

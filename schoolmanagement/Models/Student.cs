@@ -1,39 +1,37 @@
+// schoolmanagement/Models/Student.cs
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Ensure this is present at the top
+using System.Collections.Generic;
+using System; // Required for DateTime
 
 namespace schoolmanagement.Models
 {
     public class Student
     {
-        public int Id { get; set; } // Your primary key might be named differently (e.g., StudentId)
+        public int Id { get; set; }
 
-        [Required(ErrorMessage = "Student name is required.")]
-        [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name { get; set; }
+        [Required]
+        public required string Name { get; set; } // Added 'required'
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime DateOfBirth { get; set; } // Or Nullable DateTime? DateOfBirth { get; set; } if appropriate
+        [Display(Name = "Date Of Birth")]
+        public DateTime DateOfBirth { get; set; }
 
-        [StringLength(10)]
-        public string Gender { get; set; } // Or string? Gender { get; set; } if appropriate
+        [Required]
+        public required string Gender { get; set; } // Added 'required'
 
-        [StringLength(20)]
+        [Required]
         [Display(Name = "Phone Number")]
-        public string PhoneNumber { get; set; } // Or string? PhoneNumber { get; set; } if appropriate
-
-        // Foreign key for Teacher
-        [Display(Name = "Homeroom Teacher")]
-        public int? TeacherId { get; set; }
-
-        [ForeignKey("TeacherId")]
-        public Teacher? Teacher { get; set; } // <--- CRITICAL FIX: MADE NULLABLE
+        public required string PhoneNumber { get; set; } // Added 'required'
 
         // Foreign key for Class
         [Display(Name = "Class")]
-        public int? ClassId { get; set; }
+        public int ClassId { get; set; }
+        public Class? Class { get; set; } // Made nullable as navigation properties can be null
 
-        [ForeignKey("ClassId")]
-        public Class? Class { get; set; } // <--- CRITICAL FIX: MADE NULLABLE
+        // Foreign key for Teacher
+        [Display(Name = "Teacher")]
+        public int TeacherId { get; set; }
+        public Teacher? Teacher { get; set; } // Made nullable as navigation properties can be null
     }
 }
