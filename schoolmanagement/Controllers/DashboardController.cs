@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using schoolmanagement.Data; // Ensure this matches your DbContext namespace
-using Microsoft.AspNetCore.Authorization; // For authorization attributes
-using System.Linq; // For .Count()
+using schoolmanagement.Data; // This should be your DbContext's namespace
+using Microsoft.AspNetCore.Authorization; // For authorization attributes (if you uncomment them)
+using System.Linq; // For .Count() and .OrderByDescending()
+using System.Threading.Tasks; // Required for async/await
+using Microsoft.EntityFrameworkCore; // Crucial for ToListAsync() and CountAsync()
 
 namespace schoolmanagement.Controllers
 {
@@ -19,27 +21,46 @@ namespace schoolmanagement.Controllers
         }
 
         // Action method for the Dashboard's main view (e.g., /Dashboard or /Dashboard/Index)
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Retrieve counts of various entities from the database
-            // .Count() is efficient as it translates to a COUNT(*) query in SQL
-            var totalStudents = _context.Students.Count();
-            var totalTeachers = _context.Teachers.Count();
-            var totalClasses = _context.Classes.Count();
-            var totalSubjects = _context.Subjects.Count();
+            // Retrieve counts of various entities from the database asynchronously
+            var totalStudents = await _context.Students.CountAsync();
+            var totalTeachers = await _context.Teachers.CountAsync();
+            var totalClasses = await _context.Classes.CountAsync();
+            var totalSubjects = await _context.Subjects.CountAsync();
 
-            // Pass these counts to the View using ViewBag.
-            // ViewBag is dynamic, making it easy to pass simple data to the view.
+            // Fetch recent additions (e.g., last 5) asynchronously
+            // Assuming your entities have an 'Id' property.
+            // If your Class model uses 'ClassId' as its primary key, we use that.
+            var recentStudents = await _context.Students
+                                                .OrderByDescending(s => s.Id)
+                                                .Take(5)
+                                                .ToListAsync();
+
+            var recentTeachers = await _context.Teachers
+                                                .OrderByDescending(t => t.Id)
+                                                .Take(5)
+                                                .ToListAsync();
+
+            var recentClasses = await _context.Classes
+                                                .OrderByDescending(c => c.ClassId) // <--- CHANGED TO c.ClassId
+                                                .Take(5)
+                                                .ToListAsync();
+
+            // Pass these counts and recent lists to the View using ViewBag.
             ViewBag.TotalStudents = totalStudents;
             ViewBag.TotalTeachers = totalTeachers;
             ViewBag.TotalClasses = totalClasses;
             ViewBag.TotalSubjects = totalSubjects;
 
+            ViewBag.RecentStudents = recentStudents;
+            ViewBag.RecentTeachers = recentTeachers;
+            ViewBag.RecentClasses = recentClasses;
+
             // Return the default view associated with this action (Views/Dashboard/Index.cshtml)
             return View();
-        }
 
-        // You can add more dashboard-related actions here later if needed,
-        // for example, specific charts or more detailed summaries.
+        }
+ 
     }
 }
