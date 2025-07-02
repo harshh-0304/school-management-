@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="text-primary-custom mb-4">Welcome to Your Dashboard!</h1>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm rounded-lg text-center p-3 hover-shadow-lg transition">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Students</h5>
+                <p class="display-4 fw-bold text-primary-custom">@ViewBag.TotalStudents</p>
+                <a href="/Students" class="btn btn-outline-primary btn-sm rounded-pill">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm rounded-lg text-center p-3 hover-shadow-lg transition">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Teachers</h5>
+                <p class="display-4 fw-bold text-success">@ViewBag.TotalTeachers</p>
+                <a href="/Teachers" class="btn btn-outline-success btn-sm rounded-pill">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm rounded-lg text-center p-3 hover-shadow-lg transition">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Classes</h5>
+                <p class="display-4 fw-bold text-info">@ViewBag.TotalClasses</p>
+                <a href="/Classes" class="btn btn-outline-info btn-sm rounded-pill">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card shadow-sm rounded-lg text-center p-3 hover-shadow-lg transition">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Subjects</h5>
+                <p class="display-4 fw-bold text-warning">@ViewBag.TotalSubjects</p>
+                <a href="/Subjects" class="btn btn-outline-warning btn-sm rounded-pill">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
