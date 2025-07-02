@@ -4,7 +4,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: #1a148c; /* Matches bg-primary-custom, or gradient start color */
+    background-color: #181377; /* Matches bg-primary-custom, or gradient start color */
     background-image: url('');
     background-repeat: no-repeat;
     background-size: cover;
@@ -22,7 +22,7 @@
 
 /* Custom colors for Bootstrap if default ones don't match previous intent */
 /* Primary (Indigo-like) */
-.bg-primary-custom { background-color: #4f46e5 !important; } /* A strong indigo */
+.bg-primary-custom { background-color: #192c3b !important; } /* A strong indigo */
 .text-primary-custom { color: #4f46e5 !important; }
 .btn-primary-custom {
     background-color: #4f46e5;
@@ -30,19 +30,19 @@
     color: #fff;
 }
 .btn-primary-custom:hover {
-    background-color: #4338ca;
+    background-color: #201a67;
     border-color: #4338ca;
 }
 
 /* Secondary (Purple-like) for gradient */
 .bg-gradient-custom {
-    background: linear-gradient(to right, #2e2992, #6745b8); /* Indigo to Purple */
+    background: linear-gradient(to right, #3b3b58, #9c95ad); /* Indigo to Purple */
 }
 
 /* Feature icons (using Bootstrap's text utilities, or custom if needed) */
-.icon-student { color: #3f44e5; } /* Indigo */
-.icon-teacher { color: #22c55e; } /* Green */
-.icon-class { color: #3b82f6; }  /* Blue */
+.icon-student { color: #383a2d; } /* Indigo */
+.icon-teacher { color: #ff4603; } /* Green */
+.icon-class { color: #048b2f; }  /* Blue */
 
 /* Custom transition for hover effects */
 .transition {
